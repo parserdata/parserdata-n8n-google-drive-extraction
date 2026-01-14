@@ -1,6 +1,7 @@
 # Parserdata + n8n: Google Drive Document Extraction
 
-Automatically extract structured data from documents uploaded to Google Drive using **n8n** and the **Parserdata API**, then save clean JSON results back to Drive.
+Automatically extract structured data from documents uploaded to Google Drive using **n8n** and the **[Parserdata API](https://parserdata.com/parserdata-api)**
+, then save clean JSON results back to Drive.
 
 No prior n8n experience required.
 
