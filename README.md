@@ -1,3 +1,6 @@
+![n8n workflow](https://img.shields.io/badge/n8n-workflow-blue)
+![Parserdata API](https://img.shields.io/badge/Parserdata-API-green)
+
 # Parserdata + n8n: Google Drive Document Extraction
 
 Automatically extract structured data from documents uploaded to Google Drive using **n8n** and the **[Parserdata API](https://parserdata.com/parserdata-api)**
@@ -237,6 +240,21 @@ All steps are fully automated.
 
 ---
 
+## Importing this workflow into n8n
+
+1. Download [`workflow/google-drive-parserdata.json`](workflow/google-drive-parserdata.json).
+2. In n8n, click **Import from File**.
+3. Select the downloaded JSON file.
+4. Open the imported workflow and:
+   - Set your **Google Drive credentials** on all Google Drive nodes.
+   - Create an HTTP Header Auth credential with:
+     - Header name: `X-API-Key`
+     - Header value: `Your X-API-Key`
+   - Replace `YOUR_INPUT_FOLDER_ID` and `YOUR_OUTPUT_FOLDER_ID` with your own Google Drive folder IDs.
+5. Save and activate the workflow.
+
+---
+
 ## Perfect for
 
 This workflow is designed to fit a wide range of real-world automation and data extraction scenarios, including:
@@ -267,4 +285,10 @@ This workflow is designed to fit a wide range of real-world automation and data 
 
 - **Startups and small teams**  
   Replace manual workflows with AI-driven automation using minimal infrastructure.
+
+    ---
+
+## License
+
+MIT
 
