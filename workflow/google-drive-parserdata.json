@@ -1,1 +1,202 @@
-
+{
+  "name": "Google Drive → Parserdata Extract → JSON",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "YOUR_INPUT_FOLDER_ID",
+          "mode": "list",
+          "cachedResultName": "INPUT_FOLDER",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/YOUR_INPUT_FOLDER_ID"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "name": "Google Drive Trigger (New file in folder)",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -32
+      ],
+      "id": "6d288148-adb5-4bb3-aee6-be7334d07dd3"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": "={{$json[\"id\"]}}",
+        "options": {}
+      },
+      "name": "Google Drive (Download file)",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 2,
+      "position": [
+        -384,
+        -32
+      ],
+      "id": "53d16e16-2392-4fa0-8261-3004949c15f3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.parserdata.com/v1/extract",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "Extract invoice number, invoice date, supplier name, total amount, and line items (description, quantity, unit price, net amount)."
+            },
+            {
+              "name": "options",
+              "value": "{\"return_schema\":false,\"return_selected_fields\":false}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "name": "HTTP Request (Parserdata Extract)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -128,
+        -32
+      ],
+      "id": "f66c4499-d438-4bcb-82a6-f8647cd73e84"
+    },
+    {
+      "parameters": {
+        "jsCode": "const api = $json;\n\n// Nice output name\nconst inputName = (api.file_name || api.result?.fileName || 'document').toString();\nconst base = inputName.replace(/\\.[^.]+$/, '');\nconst outName = `${base}_extracted.json`;\n\n// Save ONLY the extracted payload (this matches the prompt output)\nreturn [{\n  json: {\n    outName,\n    payload: api.result ?? api, // fallback just in case\n  }\n}];"
+      },
+      "name": "Code (Build JSON file content)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -32
+      ],
+      "id": "c01d5434-1fdc-4115-b6aa-fbc9c6014c55"
+    },
+    {
+      "parameters": {
+        "mode": "jsonToBinary",
+        "options": {
+          "fileName": "={{$json.outName}}",
+          "keepSource": true,
+          "mimeType": "application/json"
+        }
+      },
+      "name": "Move Binary Data (JSON -> binary)",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -32
+      ],
+      "id": "8cb8b36b-a4a3-4af8-9246-ca80f77a30d3"
+    },
+    {
+      "parameters": {
+        "binaryData": true,
+        "name": "={{$binary.data.fileName}}",
+        "parents": [
+          "=YOUR_OUTPUT_FOLDER_ID"
+        ],
+        "options": {}
+      },
+      "name": "Google Drive (Upload extracted JSON)",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -32
+      ],
+      "id": "7e1dc69b-6d67-4c8b-bce2-bbf95742f8cf"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Drive Trigger (New file in folder)": {
+      "main": [
+        [
+          {
+            "node": "Google Drive (Download file)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive (Download file)": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request (Parserdata Extract)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request (Parserdata Extract)": {
+      "main": [
+        [
+          {
+            "node": "Code (Build JSON file content)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code (Build JSON file content)": {
+      "main": [
+        [
+          {
+            "node": "Move Binary Data (JSON -> binary)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move Binary Data (JSON -> binary)": {
+      "main": [
+        [
+          {
+            "node": "Google Drive (Upload extracted JSON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "47d49aae-f773-42a8-a45d-bf561f737e4e",
+  "meta": {},
+  "tags": []
+}
