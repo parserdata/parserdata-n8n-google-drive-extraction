@@ -292,6 +292,8 @@ This workflow is designed to fit a wide range of real-world automation and data 
 
 MIT
 
+---
+
 ## Need help or a custom setup?
 
 This repository is a reference example.
