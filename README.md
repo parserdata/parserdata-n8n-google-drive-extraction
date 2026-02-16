@@ -292,3 +292,8 @@ This workflow is designed to fit a wide range of real-world automation and data 
 
 MIT
 
+## Need help or a custom setup?
+
+This repository is a reference example.
+
+If you need help tailoring it to your workflow, or want advice on a more advanced Parserdata API integration (custom schemas, scale, or production use), reach out to us: support@parserdata.com
