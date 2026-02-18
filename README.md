@@ -8,6 +8,13 @@ Automatically extract structured data from documents uploaded to Google Drive us
 
 No prior n8n experience required.
 
+## Official ParserData pages
+
+- **Official workflow page:** https://parserdata.com/integrations/n8n/google-drive-extraction
+- **n8n integration hub:** https://parserdata.com/integrations/n8n
+- **API reference:** https://parserdata.com/parserdata-api
+- **Pricing:** https://parserdata.com/pricing
+
 
 ![Workflow overview](screenshots/workflow.png)
 
